@@ -1,0 +1,102 @@
+package elina;
+
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+
+public class FrameEx1 implements ActionListener {
+	JFrame fr;
+	JLabel l_name;
+	JTextField tf_name;
+	JLabel l_email;
+	JTextField tf_email;
+	JLabel l_password;
+	JTextField tf_password;
+	JLabel l_phone ;
+	JTextField tf_phone ;
+	JButton btn_submit;
+	private Component l_address;
+
+	public FrameEx1() {
+		fr = new JFrame();
+		JLabel l_reg = new JLabel("Register ");
+		l_reg.setBounds(40, 60, 200, 40);
+
+		l_name = new JLabel("Full Name ");
+		l_name.setBounds(50, 100, 100, 40);
+
+		tf_name = new JTextField();
+		tf_name.setBounds(160, 100, 150, 30);
+		
+		l_email = new JLabel("email ");
+		l_email.setBounds(60, 150, 100, 40);
+
+		tf_email = new JTextField();
+		tf_email.setBounds(160, 150, 150, 30);
+		
+		l_password = new JLabel("password ");
+		l_password.setBounds(50, 200, 100, 40);
+
+		tf_password = new JTextField();
+		tf_password.setBounds(160, 200, 150, 30);
+		
+	    l_phone  = new JLabel("phone no ");
+		l_phone .setBounds(50, 250, 100, 40);
+
+		tf_phone  = new JTextField();
+		tf_phone .setBounds(160, 250, 150, 30);
+
+		btn_submit = new JButton("Register");
+		btn_submit.setBounds(120, 300, 100, 50);
+
+		btn_submit.addActionListener(this);
+		fr.add(l_reg);
+		fr.add(tf_name);
+		fr.add(l_name);
+		fr.add(l_email);
+		fr.add(tf_email);
+		fr.add(l_password);
+		fr.add(tf_password);
+		fr.add(l_phone);
+		fr.add(tf_phone);
+		fr.add(btn_submit);
+		fr.setLayout(null);
+		fr.setSize(400, 500);
+		fr.setVisible(true);
+	}
+
+	public static void main(String[] args) {
+		FrameEx1 f = new FrameEx1();
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		String name = tf_name.getText().toString();
+		System.out.println(name);
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+
+			Connection con = (Connection) DriverManager.getConnection(
+					"jdbc:mysql://localhost:3306/gym_tracker", "root", "root");
+
+			java.sql.PreparedStatement ps = con
+					.prepareStatement("insert into members values(?,?)");
+			
+			ps.setInt(1,4);
+			ps.setString(2, name);
+
+			ps.execute();
+			ps.close();
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+	}
+}
