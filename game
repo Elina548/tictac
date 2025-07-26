@@ -1,1 +1,132 @@
-created game file
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>To-Do App</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #e0e0e0;
+      display: flex;
+      justify-content: center;
+      padding: 50px;
+    }
+    .todo-box {
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      width: 350px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      background: #f9f9f9;
+      margin-bottom: 8px;
+      border-radius: 6px;
+    }
+    li.completed label {
+      text-decoration: line-through;
+      color: gray;
+    }
+    .delete {
+      background: #ff4d4d;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="todo-box">
+  <h2>📝 To-Do List</h2>
+  <input type="text" id="taskInput" placeholder="Enter new task...">
+  <ul id="taskList"></ul>
+</div>
+
+<script>
+  const taskInput = document.getElementById("taskInput");
+  const taskList = document.getElementById("taskList");
+
+  // Load tasks from localStorage
+  window.onload = () => {
+    const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    savedTasks.forEach(task => createTaskElement(task.text, task.completed));
+  };
+
+  taskInput.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+      const taskText = taskInput.value.trim();
+      if (taskText) {
+        createTaskElement(taskText);
+        saveTasks();
+        taskInput.value = "";
+      }
+    }
+  });
+
+  function createTaskElement(text, completed = false) {
+    const li = document.createElement("li");
+    if (completed) li.classList.add("completed");
+
+    const label = document.createElement("label");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = completed;
+
+    checkbox.addEventListener("change", () => {
+      li.classList.toggle("completed");
+      saveTasks();
+    });
+
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(" " + text));
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "delete";
+    deleteBtn.textContent = "X";
+    deleteBtn.onclick = () => {
+      li.remove();
+      saveTasks();
+    };
+
+    li.appendChild(label);
+    li.appendChild(deleteBtn);
+    taskList.appendChild(li);
+  }
+
+  function saveTasks() {
+    const tasks = [];
+    taskList.querySelectorAll("li").forEach(li => {
+      const checkbox = li.querySelector("input[type='checkbox']");
+      const text = li.innerText.replace("X", "").trim();
+      tasks.push({ text: text, completed: checkbox.checked });
+    });
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }
+</script>
+
+</body>
+</html>
